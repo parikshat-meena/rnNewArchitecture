@@ -1,97 +1,237 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# React Native New Architecture Project
 
-# Getting Started
+A React Native 0.80.1 project with **New Architecture (Fabric + TurboModules)** support, featuring Bluetooth Low Energy (BLE) connectivity and advanced gesture handling.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Features
 
-## Step 1: Start Metro
+- ✅ **New Architecture (Fabric + TurboModules)** enabled
+- ✅ **Hermes + JSI** engine for optimal performance
+- ✅ **Bluetooth Low Energy (BLE)** with `react-native-ble-plx`
+- ✅ **Gesture Handler** with Reanimated 3+ support
+- ✅ **Production-grade** permission handling for Android API 31+
+- ✅ **Fabric-compliant** components and animations
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📋 Requirements
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- Node.js >= 18
+- React Native 0.80.1
+- Android SDK API 31+ / iOS 13+
+- Android Studio / Xcode
 
-```sh
-# Using npm
-npm start
+## 🛠 Setup Instructions
 
-# OR using Yarn
-yarn start
+### 1. Install Dependencies
+
+```bash
+npm install
 ```
 
-## Step 2: Build and run your app
+### 2. iOS Setup
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+```bash
+cd ios && pod install && cd ..
+```
 
-### Android
+### 3. Android Setup
 
-```sh
-# Using npm
+The project is already configured for Android with proper permissions.
+
+### 4. Run the Project
+
+```bash
+# Android
 npm run android
 
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# iOS
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 🔧 New Architecture Configuration
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### Gradle Properties (`android/gradle.properties`)
+```properties
+newArchEnabled=true
+hermesEnabled=true
+```
 
-## Step 3: Modify your app
+### Babel Configuration (`babel.config.js`)
+```javascript
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    'react-native-gesture-handler/swg',
+    'react-native-reanimated/plugin',
+  ],
+};
+```
 
-Now that you have successfully run the app, let's make changes!
+### Root Index (`index.js`)
+```javascript
+import 'react-native-gesture-handler';
+import { AppRegistry } from 'react-native';
+import App from './App';
+import { name as appName } from './app.json';
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+AppRegistry.registerComponent(appName, () => App);
+```
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## 📱 Bluetooth Configuration
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Android Permissions (`android/app/src/main/AndroidManifest.xml`)
 
-## Congratulations! :tada:
+The app includes comprehensive Bluetooth permissions for Android API 31+:
 
-You've successfully run and modified your React Native App. :partying_face:
+```xml
+<!-- Bluetooth Legacy Permissions (API < 31) -->
+<uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
 
-### Now what?
+<!-- Bluetooth New Permissions (API 31+) -->
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+<!-- Location permission for Bluetooth scanning -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+```
 
-# Troubleshooting
+### iOS Permissions (`ios/dummyProject/Info.plist`)
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+```xml
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>This app uses Bluetooth to connect to devices.</string>
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>This app uses Bluetooth to connect to peripheral devices.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app needs location access to scan for Bluetooth devices.</string>
+```
 
-# Learn More
+## 🎮 Gesture Handler Setup
 
-To learn more about React Native, take a look at the following resources:
+### App Wrapper (`App.tsx`)
+```tsx
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+function App() {
+  return (
+    <GestureHandlerRootView style={{flex: 1}}>
+      {/* App content */}
+    </GestureHandlerRootView>
+  );
+}
+```
+
+### Reanimated 3+ Usage
+The gesture components use modern Reanimated 3 features:
+- `useSharedValue` for shared values
+- `useAnimatedGestureHandler` for gesture handling
+- `useAnimatedStyle` for animated styles
+- `withSpring` for smooth animations
+- `runOnJS` for JavaScript thread operations
+
+## 📁 Project Structure
+
+```
+src/
+├── component/
+│   ├── Bluetooth.tsx          # BLE scanner with New Architecture support
+│   ├── LeftSwipeComp.tsx      # Swipe gesture with Reanimated 3+
+│   ├── Home.tsx               # Home component
+│   └── Swipable.tsx           # Additional swipe component
+```
+
+## 🔍 Key Components
+
+### BluetoothScanner Component
+
+- **New Architecture Compatible**: Uses JSI-optimized BLE operations
+- **Modern Permissions**: Handles Android API 31+ permissions correctly
+- **Production Features**: Connection management, error handling, device discovery
+- **Performance**: Optimized scanning with proper cleanup
+
+### LeftSwipeComponent
+
+- **Reanimated 3+**: Uses modern animation APIs
+- **Fabric Compatible**: Optimized for New Architecture
+- **Smooth Gestures**: Spring animations with proper gesture handling
+- **TypeScript**: Fully typed for better development experience
+
+## 📊 Performance Features
+
+### JSI Integration
+- Direct JavaScript-to-native communication
+- Reduced bridge overhead
+- Improved Bluetooth and animation performance
+
+### Hermes Engine
+- Optimized JavaScript execution
+- Reduced memory usage
+- Faster app startup
+
+### Fabric Renderer
+- Improved UI responsiveness
+- Better animation performance
+- Modern React concurrent features
+
+## 🔍 Usage Examples
+
+### Bluetooth Scanning
+```typescript
+// Automatically handles permissions and starts scanning
+// Displays found devices with connection capability
+// Includes proper error handling and state management
+```
+
+### Gesture Handling
+```typescript
+// Left swipe gesture with visual feedback
+// Customizable threshold and callbacks
+// Smooth Reanimated 3+ animations
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Metro Bundle Error**: Clear cache with `npx react-native start --reset-cache`
+2. **Android Build Error**: Clean with `cd android && ./gradlew clean && cd ..`
+3. **iOS Build Error**: Clean build folder in Xcode
+4. **Gesture Not Working**: Ensure `GestureHandlerRootView` wraps the app
+5. **Bluetooth Not Scanning**: Check permissions in device settings
+
+### Debug Commands
+
+```bash
+# Clear Metro cache
+npx react-native start --reset-cache
+
+# Clean Android build
+cd android && ./gradlew clean && cd ..
+
+# Reinstall dependencies
+rm -rf node_modules && npm install
+
+# iOS clean (if CocoaPods available)
+cd ios && pod deintegrate && pod install && cd ..
+```
+
+## 📝 Development Notes
+
+- All components are Fabric-compatible
+- Bluetooth operations use JSI for optimal performance
+- Gesture handling leverages Reanimated 3+ worklets
+- Proper cleanup and memory management implemented
+- TypeScript support throughout the project
+
+## 🎯 Next Steps
+
+1. **Add More BLE Features**: Characteristic read/write, notifications
+2. **Expand Gestures**: Add more gesture types (pinch, rotate)
+3. **Error Boundaries**: Add React error boundaries for better UX
+4. **Testing**: Add unit tests for Bluetooth and gesture components
+5. **Performance Monitoring**: Add Flipper or similar debugging tools
+
+## 📄 License
+
+This project is licensed under the MIT License.
